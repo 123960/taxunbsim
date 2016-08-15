@@ -1,0 +1,67 @@
+@import helper._
+
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>TaxUnb Simulator</title>
+        <link rel="stylesheet" media="screen" href="@routes.Assets.versioned("stylesheets/main.css")">
+        <link rel="shortcut icon" type="image/png" href="@routes.Assets.versioned("images/favicon.png")">
+        <script src="@routes.Assets.versioned("javascripts/hello.js")" type="text/javascript"></script>
+    </head>
+    <body>
+        <script type="text/javascript" charset="utf-8">
+            var wsGroup = new WebSocket("ws://localhost:9000/wsGroup");
+            wsGroup.onopen = function(){
+              console.log("connection stablished!!");
+            }
+            wsGroup.onmessage = function(jsonClient) {
+              console.log(jsonClient);
+              /*  var group = JSON.parse(jsonGroup.data);
+                var nr        = document.createElement("td");
+                nr.appendChild(document.createTextNode("1"));
+                var id        = document.createElement("td");
+                id.appendChild(document.createTextNode(group.id));
+                var date      = document.createElement("td");
+                date.appendChild(document.createTextNode(new Date(group.groupDate), 'dd/mm/yyyy HH:MM:ss'));
+                var qtd       = document.createElement("td");
+                qtd.appendChild(document.createTextNode(group.elements.length));
+                var perc      = document.createElement("td");
+                perc.appendChild(document.createTextNode(group.percent));
+                var charac    = document.createElement("td");
+                charac.appendChild(document.createTextNode(group.affinities));
+                var newLine    = document.createElement("tr");
+                newLine.appendChild(nr);
+                newLine.appendChild(id);
+                newLine.appendChild(date);
+                newLine.appendChild(qtd);
+                newLine.appendChild(perc);
+                newLine.appendChild(charac);
+                var tableGroups = document.getElementById("table-groups");
+                tableGroups.appendChild(newLine);*/
+
+            };
+            function recarga() {
+              wsGroup.send("newClient");
+  					};
+            function consumo() {
+              wsGroup.send("recarga-PREPG-10");
+            };
+            function newClient() {
+              wsGroup.send("consumo-TDATA-10");
+            };
+  			</script>
+        <p>TaxUnb Simulator
+        <button onclick="newClient()">novo cliente</button>
+        <button onclick="recarga()">recarga</button>
+        <button onclick="consumo()">consumo</button>
+        <table style="width:100%" id="table-groups">
+        <tr>
+          <td>[#]</td>
+          <td>[ID GROUP]</td>
+          <td>[DATA DO AGRUPAMENTO]</td>
+          <td>[QUANTIDADE DE CLIENTES]</td>
+          <td>[PERCENTUAL DO TOTAL]</td>
+          <td>[CARACTERISTICAS]</td>
+        </tr>
+      </table>
+</html>

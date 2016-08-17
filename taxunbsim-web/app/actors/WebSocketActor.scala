@@ -49,19 +49,24 @@ class WebSocketActor(out: ActorRef) extends Actor {
     )
   }
 
-  val rPattern  = "recarga-\\w+-\\d+(\\.*\\,*)\\d*".r
-  val rvPattern = "recarga-\\w+-".r
-  val cPattern  = "consumo-\\w+-\\d+(\\.*\\,*)\\d*".r
-  val tvPattern = "consumo-\\w+-".r
+  val rvp = "recarga-\\w+-".r
+  val tvp = "consumo-\\w+-".r
 
   def receive = {
-    case "resetClient" => out ! newClient
-    case rPattern(r)   => out ! {client = client.recarga(r.replace("recarga-\\w+-", "").toDouble,
-                                                         rvPattern.findFirstIn(r).get.replace("recarga-", "")
-                                                         )}
-    case cPattern(c)   => out ! {client = client.consumo(c.replace("consumo-\\w+-", "").toDouble,
-                                                         tvPattern.findFirstIn(c).get.replace("consumo-", "")
-                                                         )}
+    case "resetClient" => out ! Json.toJson(newClient).toString()
+    case op: String    => if (op.contains("recarga")) {
+                            client = client.recarga(op.replaceFirst("recarga-\\w+-", "").toDouble,
+                                                    rvp.findFirstIn(op).get.replace("recarga-", "")
+                                                                           .replace("-", ""))
+                            out ! Json.toJson(client).toString()
+                          } else if (op.contains("consumo")){
+                            client = client.consumo(op.replaceFirst("consumo-\\w+-", "").toDouble,
+                                                    tvp.findFirstIn(op).get.replace("consumo-", "")
+                                                                           .replace("-", ""))
+                            out ! Json.toJson(client).toString()
+                          } else {
+                            println("none=" + op)
+                          }
   }
 
 }

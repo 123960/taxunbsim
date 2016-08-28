@@ -16,47 +16,52 @@
             }
             wsGroup.onmessage = function(jsonClient) {
               console.log(jsonClient);
-                var client       = JSON.parse(jsonClient.data);
-                var name         = document.createElement("td");
-                name.appendChild(document.createTextNode(client.name));
-                var saldoCore    = document.createElement("td");
-                saldoCore.appendChild(document.createTextNode(client.saldoCore));
-                var saldoBdfin   = document.createElement("td");
-                saldoBdfin.appendChild(document.createTextNode(client.saldoBDFIN));
-                var saldoPendUnb = document.createElement("td");
-                saldoPendUnb.appendChild(document.createTextNode(client.saldoPendUNB));
-                var nfs          = document.createElement("td");
-                nfs.appendChild(document.createTextNode(client.nfs));
-                var newLine    = document.createElement("tr");
-                newLine.appendChild(name);
-                newLine.appendChild(saldoCore);
-                newLine.appendChild(saldoBdfin);
-                newLine.appendChild(saldoPendUnb);
-                newLine.appendChild(nfs);
-                var tableGroups = document.getElementById("table-groups");
-                tableGroups.appendChild(newLine);
+                var client = JSON.parse(jsonClient.data);
+                document.getElementById("saldoCore").textContent  = client.saldoCore;
+                document.getElementById("saldoBdfin").textContent = client.saldoBDFIN;
+                document.getElementById("saldoUnb").textContent   = client.saldoPendUNB;
+                document.getElementById("nfs").textContent        = client.nfs;
             };
             function recarga() {
-              wsGroup.send("recarga-PREPG-10");
+              wsGroup.send("recarga-PREPG-" + document.getElementById("rv").value);
   					};
             function consumo() {
-              wsGroup.send("consumo-TDATA-10");
+              wsGroup.send("consumo-" + document.getElementById("ct").value + "-" + document.getElementById("cv").value);
             };
             function newClient() {
               wsGroup.send("resetClient");
             };
   			</script>
         <p>TaxUnb Simulator
-        <button onclick="newClient()">novo cliente</button>
-        <button onclick="recarga()">recarga</button>
-        <button onclick="consumo()">consumo</button>
+        <table style="width:100%" id="table-operations">
+          <tr>
+            <td>
+              <button onclick="newClient()">novo cliente</button>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <button onclick="recarga()">recarga</button> <input type="text" id="rv">
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <button onclick="consumo()">consumo</button> Valor: <input type="text" id="cv"> Tipo: <input type="text" id="ct">
+            </td>
+          </tr>
+        </table>
         <table style="width:100%" id="table-groups">
         <tr>
-          <td>[NOME]</td>
           <td>[SALDO CORE]</td>
           <td>[SALDO BDFIN]</td>
           <td>[SALDO PENDENTE DE DESONERAÇÃO]</td>
           <td>[NOTAS FISCAIS]</td>
+        </tr>
+        <tr>
+          <td id="saldoCore">0</td>
+          <td id="saldoBdfin">0</td>
+          <td id="saldoUnb"></td>
+          <td id="nfs"></td>
         </tr>
       </table>
 </html>

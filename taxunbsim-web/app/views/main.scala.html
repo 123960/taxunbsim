@@ -19,8 +19,8 @@
                 var client = JSON.parse(jsonClient.data);
                 document.getElementById("saldoCore").textContent  = client.saldoCore;
                 document.getElementById("saldoBdfin").textContent = client.saldoBDFIN;
-                document.getElementById("saldoUnb").textContent   = client.saldoPendUNB;
-                document.getElementById("nfs").textContent        = client.nfs;
+                document.getElementById("saldoUnb").textContent   = f1(client.saldoPendUNB);
+                document.getElementById("nfs").textContent        = f2(client.nfs);
             };
             function recarga() {
               wsGroup.send("recarga-PREPG-" + document.getElementById("rv").value);
@@ -30,6 +30,26 @@
             };
             function newClient() {
               wsGroup.send("resetClient");
+            };
+            function f1(arr) {
+              if (arr.length == 0) {
+                return null;
+              } else {
+                var f = arr.reduce(function (acc, c) {
+                  return acc + "[NF:" + c.nf.nfId + "|Value:" + c.value + "]-"
+                }, "");
+                return f;
+              }
+            };
+            function f2(arr) {
+              if (arr.length == 0) {
+                return null;
+              } else {
+                var f = arr.reduce(function (acc, c) {
+                  return acc + "[NF:" + c.nfId + "|Value:" + c.nfValue + "|BC:" + c.bcValue + "]-"
+                }, "");
+                return f;
+              }
             };
   			</script>
         <p>TaxUnb Simulator
@@ -46,7 +66,11 @@
           </tr>
           <tr>
             <td>
-              <button onclick="consumo()">consumo</button> Valor: <input type="text" id="cv"> Tipo: <input type="text" id="ct">
+              <button onclick="consumo()">consumo</button> Valor: <input type="text" id="cv"> Tipo: <select id="ct">
+                                                                                                      <option value="TDATA">TDATA</option>
+                                                                                                      <option value="TBRASIL">TBRASIL</option>
+                                                                                                      <option value="SCRD">SCRD</option>
+                                                                                                    </select>
             </td>
           </tr>
         </table>

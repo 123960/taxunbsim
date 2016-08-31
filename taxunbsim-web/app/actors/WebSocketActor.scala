@@ -53,7 +53,8 @@ class WebSocketActor(out: ActorRef) extends Actor {
   val tvp = "consumo-\\w+-".r
 
   def receive = {
-    case "resetClient" => out ! Json.toJson(newClient).toString()
+    case "resetClient" => client = newClient
+                          out ! Json.toJson(client).toString()
     case op: String    => if (op.contains("recarga")) {
                             client = client.recarga(op.replaceFirst("recarga-\\w+-", "").toDouble,
                                                     rvp.findFirstIn(op).get.replace("recarga-", "")

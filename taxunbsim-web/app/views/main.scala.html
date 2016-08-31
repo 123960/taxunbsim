@@ -19,8 +19,14 @@
                 var client = JSON.parse(jsonClient.data);
                 document.getElementById("saldoCore").textContent  = client.saldoCore;
                 document.getElementById("saldoBdfin").textContent = client.saldoBDFIN;
-                document.getElementById("saldoUnb").textContent   = f1(client.saldoPendUNB);
-                document.getElementById("nfs").textContent        = f2(client.nfs);
+                var snfs = detailsSaldoUnb(client.saldoPendUNB);
+                for (i in snfs) {
+                  document.getElementById("saldoUnb").appendChild(snfs[i]);
+                };
+                var nfs = detailsNF(client.nfs);
+                for (i in nfs) {
+                  document.getElementById("nfs").appendChild(nfs[i]);
+                };
             };
             function recarga() {
               wsGroup.send("recarga-PREPG-" + document.getElementById("rv").value);
@@ -31,23 +37,36 @@
             function newClient() {
               wsGroup.send("resetClient");
             };
-            function f1(arr) {
+            function detailsSaldoUnb(arr) {
               if (arr.length == 0) {
                 return null;
               } else {
-                var f = arr.reduce(function (acc, c) {
-                  return acc + "[NF:" + c.nf.nfId + "|Value:" + c.value + "]-"
-                }, "");
+                var f =
+                  arr.map(function (c) {
+                    var d = document.createElement("details");
+                    var s = document.createElement("summary");
+                    s.appendChild(document.createTextNode("NF:" + c.nf.nfId + "|saldoPendUNB:" + c.value));
+                    d.appendChild(s);
+                    return d;
+                  });
                 return f;
               }
             };
-            function f2(arr) {
-              if (arr.length == 0) {
+            function detailsNF(nfs) {
+              if (nfs.length == 0) {
                 return null;
               } else {
-                var f = arr.reduce(function (acc, c) {
-                  return acc + "[NF:" + c.nfId + "|Value:" + c.nfValue + "|BC:" + c.bcValue + "]-"
-                }, "");
+                var f =
+                  nfs.map(function (nf) {
+                    var d = document.createElement("details");
+                    var s = document.createElement("summary");
+                    s.appendChild(document.createTextNode("NF:" + nf.nfId + "|Value:" + nf.nfValue));
+                    d.appendChild(s);
+                    var t = document.createTextNode("Type:"    + nf.nfType + "|BC:" + nf.bcValue + "|assocValue:" + nf.assocValue +
+                                                    "|svaUNB:" + nf.svaUNB + "|scrdUNB:" + nf.scrdUNB);
+                    d.appendChild(t);
+                    return d;
+                  });
                 return f;
               }
             };

@@ -19,11 +19,20 @@
                 var client = JSON.parse(jsonClient.data);
                 document.getElementById("saldoCore").textContent  = client.saldoCore;
                 document.getElementById("saldoBdfin").textContent = client.saldoBDFIN;
+                var nfs = detailsNF(client.nfs);
                 var snfs = detailsSaldoUnb(client.saldoPendUNB);
+                var node1 = document.getElementById("saldoUnb");
+                var node2 = document.getElementById("nfs");
+
+                while (node1.hasChildNodes()) {
+                  node1.removeChild(node1.lastChild);
+                }
+                while (node2.hasChildNodes()) {
+                  node2.removeChild(node2.lastChild);
+                }
                 for (i in snfs) {
                   document.getElementById("saldoUnb").appendChild(snfs[i]);
                 };
-                var nfs = detailsNF(client.nfs);
                 for (i in nfs) {
                   document.getElementById("nfs").appendChild(nfs[i]);
                 };
